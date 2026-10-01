@@ -1,0 +1,733 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="12 題叢林情境測驗，找出你的交易動物，拿到專屬規則與 30 天改善計畫。">
+<style>[hidden]{display:none!important}body{margin:0}img{max-width:100%}</style>
+</head>
+<body>
+<title>交易動物圖鑑</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chiron+GoRound+TC:wght@400;600;800&family=Fredoka:wght@500;700&display=swap">
+<style>
+/* Layout: jungle page — leafy canopy + vines on top, bushes at the bottom; intro is a jungle scene with the six animals,
+   each question is asked by an animal in a speech bubble, result is a leafy "animal passport" + action plan */
+:root {
+  --bg: #EAF5DF;
+  --surface: #FFFEF7;
+  --ink: #24402D;
+  --muted: #5F7C66;
+  --line: #D2E6C3;
+  --accent: #F29A2E;       /* 芒果橘 */
+  --accent-soft: #FFEDCC;
+  --accent-deep: #C9761B;  /* 按鈕立體陰影 */
+  --on-accent: #3A2200;
+  --up: #E25A4F;           /* 台灣慣例：紅漲 */
+  --down: #2E9E62;         /* 綠跌 */
+  --leaf1: #4FA055; --leaf2: #2F7D45; --leaf3: #8CCB6A; --vine: #6B8E3A;
+  --sky1: #D5EEF5; --sky2: #EFF8E4; --sand: #F3DDA6; --hill: #BFE19F;
+  --firefly: 0;
+  --shadow: 0 6px 0 var(--line);
+  --f-display: "Chiron GoRound TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --f-body: "Chiron GoRound TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --f-num: "Fredoka", "Chiron GoRound TC", ui-rounded, system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10251A; --surface: #183424; --ink: #E9F5E1; --muted: #A2C2A9; --line: #2B4A34;
+    --accent: #FFB04A; --accent-soft: #3E2F15; --accent-deep: #B06A10; --on-accent: #3A2200;
+    --up: #F07A6E; --down: #58C98A;
+    --leaf1: #2E6B3A; --leaf2: #1F5130; --leaf3: #4C8A4A; --vine: #3F5E2A;
+    --sky1: #14283A; --sky2: #173322; --sand: #5A4A2A; --hill: #1F4A2C;
+    --firefly: 1;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10251A; --surface: #183424; --ink: #E9F5E1; --muted: #A2C2A9; --line: #2B4A34;
+  --accent: #FFB04A; --accent-soft: #3E2F15; --accent-deep: #B06A10; --on-accent: #3A2200;
+  --up: #F07A6E; --down: #58C98A;
+  --leaf1: #2E6B3A; --leaf2: #1F5130; --leaf3: #4C8A4A; --vine: #3F5E2A;
+  --sky1: #14283A; --sky2: #173322; --sand: #5A4A2A; --hill: #1F4A2C;
+  --firefly: 1;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { overflow-x: hidden; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--f-body); font-size: 16px; line-height: 1.75;
+  padding: 0 16px; position: relative;
+}
+.lf1 { fill: var(--leaf1); } .lf2 { fill: var(--leaf2); } .lf3 { fill: var(--leaf3); }
+.vn { stroke: var(--vine); fill: none; stroke-width: 3; stroke-linecap: round; }
+.canopy { position: absolute; top: 0; left: 0; right: 0; height: 140px; pointer-events: none; z-index: 0; }
+.canopy svg, .bush svg { display: block; width: 100%; height: 100%; }
+.bush { height: 90px; margin: 40px -16px 0; pointer-events: none; }
+.fireflies { position: fixed; inset: 0; pointer-events: none; opacity: var(--firefly); z-index: 0; }
+.fireflies i { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: #FFE58A; box-shadow: 0 0 10px 3px rgba(255,229,138,.6); animation: glow 4s ease-in-out infinite; }
+@keyframes glow { 0%,100% { opacity: .15; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-14px); } }
+
+#app { position: relative; z-index: 1; padding-top: 118px; }
+.wrap { max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; font-weight: 800; line-height: 1.3; }
+p { margin: 0; }
+.eyebrow { font-family: var(--f-num); font-size: 13px; font-weight: 700; letter-spacing: .06em; color: var(--leaf2); }
+:root:not([data-theme="light"]) .eyebrow { color: var(--muted); }
+:root[data-theme="light"] .eyebrow { color: var(--leaf2); }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+.btn {
+  border: 0; border-radius: 999px; padding: 14px 32px; font-weight: 800; font-size: 18px;
+  background: var(--accent); color: var(--on-accent); box-shadow: 0 5px 0 var(--accent-deep);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 7px 0 var(--accent-deep); }
+.btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--accent-deep); }
+.btn.ghost { background: var(--surface); color: var(--ink); box-shadow: 0 5px 0 var(--line); border: 2px solid var(--line); }
+.btn-row { display: flex; flex-wrap: wrap; gap: 14px; }
+
+/* ---------- intro ---------- */
+.intro-head { display: flex; flex-direction: column; gap: 12px; text-align: center; align-items: center; }
+.intro-head h1 { font-size: clamp(32px, 7vw, 50px); }
+.intro-head h1 em { font-style: normal; color: var(--accent); display: inline-block; animation: wiggle 2.6s ease-in-out infinite; }
+@keyframes wiggle { 0%,100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg) scale(1.05); } }
+.intro-head .lede { color: var(--muted); max-width: 32em; }
+
+.scene {
+  position: relative; height: 360px; border-radius: 28px; overflow: hidden; max-width: 100%;
+  background: linear-gradient(180deg, var(--sky1), var(--sky2));
+  border: 3px solid var(--line); box-shadow: var(--shadow);
+}
+.scene > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.critter { position: absolute; font-size: 78px; line-height: 1; transform: translate(-50%, -50%); animation: bob 2.4s ease-in-out infinite; animation-delay: var(--d, 0s); filter: drop-shadow(0 3px 0 rgba(0,0,0,.08)); }
+.critter svg { color: var(--ink); width: 1em; height: 1em; }
+.critter.swing { transform-origin: 50% -120px; animation: swing 3s ease-in-out infinite; }
+@keyframes bob { 0%,100% { transform: translate(-50%, -50%); } 50% { transform: translate(-50%, -62%); } }
+@keyframes swing { 0%,100% { transform: translate(-50%, -50%) rotate(-10deg); } 50% { transform: translate(-50%, -50%) rotate(10deg); } }
+.critter .tag { position: absolute; left: 50%; top: 100%; transform: translateX(-50%); white-space: nowrap; font-size: 14px; font-weight: 800; background: var(--surface); color: var(--ink); padding: 1px 10px; border-radius: 999px; margin-top: 4px; border: 2px solid var(--line); }
+
+.roster { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.roster .mini {
+  background: var(--surface); border: 2px solid var(--line); border-radius: 22px;
+  padding: 14px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; min-width: 0;
+  transition: transform .2s;
+}
+.roster .mini:hover { transform: rotate(-2deg) translateY(-3px); }
+.mini .glyph { font-size: 50px; width: 88px; height: 88px; border-radius: 50%; display: grid; place-items: center; background: var(--accent-soft); }
+.mini .glyph svg, .second .g svg, .bar svg, .host svg { color: var(--ink); width: 1em; height: 1em; vertical-align: -0.12em; }
+.mini .nm { font-size: 17px; font-weight: 800; }
+.mini .tg { font-size: 13px; color: var(--muted); line-height: 1.5; }
+.meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; font-size: 14px; }
+.meta span { background: var(--surface); border: 2px solid var(--line); padding: 2px 12px; border-radius: 999px; color: var(--muted); }
+.center { justify-content: center; }
+
+/* ---------- candle progress ---------- */
+.progress { background: var(--surface); border: 2px solid var(--line); border-radius: 22px; padding: 10px 14px; }
+.candles { display: flex; align-items: flex-end; gap: 6px; height: 40px; }
+.candle { flex: 1; position: relative; height: 100%; display: flex; align-items: center; justify-content: center; }
+.candle::before { content: ""; position: absolute; width: 2px; border-radius: 2px; top: var(--wt, 10%); bottom: var(--wb, 10%); background: var(--line); }
+.candle i { position: relative; display: block; width: 100%; max-width: 14px; border-radius: 6px;
+  height: var(--h, 40%); margin-top: var(--o, 0); border: 2px solid var(--line); background: var(--surface); transition: background .25s, border-color .25s; }
+.candle.done.up::before { background: var(--up); }
+.candle.done.dn::before { background: var(--down); }
+.candle.done.up i { background: var(--up); border-color: var(--up); }
+.candle.done.dn i { background: var(--down); border-color: var(--down); }
+.candle.now i { border-color: var(--accent); border-width: 3px; animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse { 50% { transform: scale(1.15); } }
+
+.qhead { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.qcount { font-family: var(--f-num); font-variant-numeric: tabular-nums; font-size: 15px; font-weight: 700; background: var(--accent); color: var(--on-accent); padding: 2px 12px; border-radius: 999px; }
+.asker { display: flex; gap: 14px; align-items: flex-end; }
+.host { flex: none; width: 72px; height: 72px; border-radius: 50%; background: var(--surface); border: 3px solid var(--line); display: grid; place-items: center; font-size: 42px; animation: bob2 2.4s ease-in-out infinite; }
+@keyframes bob2 { 50% { transform: translateY(-6px); } }
+.bubble { position: relative; flex: 1; min-width: 0; background: var(--surface); border: 3px solid var(--line); border-radius: 24px 24px 24px 6px; padding: 16px 20px; }
+.bubble .who { font-size: 13px; font-weight: 800; color: var(--muted); display: block; }
+.qtext { font-size: clamp(21px, 4.4vw, 26px); }
+.opts { display: flex; flex-direction: column; gap: 12px; }
+.opt {
+  text-align: left; background: var(--surface); border: 2px solid var(--line); border-radius: 20px;
+  padding: 14px 18px; display: flex; gap: 14px; align-items: center; line-height: 1.55;
+  box-shadow: 0 4px 0 var(--line); transition: border-color .15s, transform .15s, background .15s, box-shadow .15s;
+}
+.opt:hover { border-color: var(--leaf3); transform: translateY(-2px); box-shadow: 0 6px 0 var(--leaf3); }
+.opt .k { font-family: var(--f-num); font-weight: 700; flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--bg); color: var(--leaf2); }
+.opt.picked { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 4px 0 var(--accent-deep); transform: translateY(0) scale(1.02); }
+.opt.picked .k { background: var(--accent); color: var(--on-accent); }
+.qfoot { display: flex; justify-content: space-between; align-items: center; }
+.link { background: none; border: 0; color: var(--muted); padding: 6px 0; font-size: 14px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.link:disabled { opacity: .35; cursor: default; }
+
+/* ---------- result ---------- */
+.reveal { text-align: center; font-size: 15px; font-weight: 800; color: var(--muted); }
+.specimen {
+  position: relative; background: var(--surface); border: 3px solid var(--line); border-radius: 30px; box-shadow: var(--shadow);
+  padding: 30px; display: grid; grid-template-columns: auto 1fr; gap: 20px 24px; align-items: center; overflow: hidden;
+}
+.specimen .corner { position: absolute; top: -10px; right: -10px; width: 130px; height: 90px; pointer-events: none; }
+.stamp {
+  width: 120px; height: 120px; border-radius: 50%; display: grid; place-items: center; font-size: 64px;
+  border: 5px dotted var(--leaf3); background: var(--accent-soft); animation: pop .6s cubic-bezier(.3,1.6,.5,1) both;
+}
+.stamp svg { color: var(--ink); width: 1em; height: 1em; }
+@keyframes pop { from { transform: scale(.3) rotate(-20deg); } to { transform: none; } }
+.specimen .id { display: flex; flex-direction: column; gap: 6px; min-width: 0; position: relative; }
+.specimen h2 { font-size: clamp(30px, 6vw, 40px); }
+.specimen .motto { color: var(--muted); font-weight: 600; }
+.specimen .desc { grid-column: 1 / -1; }
+.traits { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px 24px; border-top: 3px dotted var(--line); padding-top: 18px; }
+.trait { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; }
+.pips { display: flex; gap: 5px; }
+.pips b { width: 14px; height: 14px; border-radius: 50%; background: var(--line); }
+.pips b.on { background: var(--accent); }
+
+.section { display: flex; flex-direction: column; gap: 14px; }
+.section h3 { font-size: 24px; display: flex; align-items: center; gap: 10px; }
+.section h3::before { content: ""; width: 22px; height: 14px; background: var(--leaf1); border-radius: 0 100% 0 100%; flex: none; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.panel { background: var(--surface); border: 2px solid var(--line); border-radius: 22px; padding: 18px 20px; min-width: 0; }
+.panel h4 { margin: 0 0 8px; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+.panel h4 .dot { width: 10px; height: 10px; border-radius: 50%; }
+.panel ul { margin: 0; padding-left: 1.1em; display: flex; flex-direction: column; gap: 6px; font-size: 15px; }
+
+.dist { display: flex; flex-direction: column; gap: 10px; background: var(--surface); border: 2px solid var(--line); border-radius: 22px; padding: 16px 18px; }
+.bar { display: grid; grid-template-columns: 6.5em 1fr 3.2em; gap: 12px; align-items: center; font-size: 15px; }
+.bar .track { height: 14px; background: var(--bg); border-radius: 7px; overflow: hidden; }
+.bar .fill { height: 100%; background: var(--leaf3); border-radius: 7px; transition: width .9s cubic-bezier(.3,1.3,.5,1); }
+.bar.main .fill { background: var(--accent); }
+.bar.main { font-weight: 800; }
+.bar .pct { font-family: var(--f-num); font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
+
+.rules { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; counter-reset: r; }
+.rules li { background: var(--surface); border: 2px solid var(--line); border-radius: 22px; padding: 16px 18px 16px 64px; position: relative; counter-increment: r; }
+.rules li::before {
+  content: counter(r); position: absolute; left: 16px; top: 16px; width: 34px; height: 34px; border-radius: 50%;
+  background: var(--leaf1); color: #fff; font-family: var(--f-num); font-size: 16px; font-weight: 700; display: grid; place-items: center;
+}
+.rules strong { display: block; margin-bottom: 2px; font-size: 17px; }
+.rules span { color: var(--muted); font-size: 15px; }
+
+.weeks { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; }
+.week { background: var(--surface); border: 2px solid var(--line); border-radius: 20px; padding: 12px 14px; font-size: 14px; line-height: 1.6; min-width: 0; }
+.week .wk { font-family: var(--f-num); font-size: 13px; font-weight: 700; display: inline-block; margin-bottom: 6px; background: var(--accent-soft); color: var(--ink); padding: 0 10px; border-radius: 999px; }
+
+.kpi { width: 100%; border-collapse: collapse; font-size: 15px; }
+.kpi th, .kpi td { text-align: left; padding: 10px 14px; border-bottom: 2px dotted var(--line); vertical-align: top; }
+.kpi tr:last-child td { border-bottom: 0; }
+.kpi th { font-size: 13px; color: var(--muted); font-weight: 700; }
+.kpi td:last-child { font-family: var(--f-num); font-weight: 700; white-space: nowrap; color: var(--accent-deep); }
+:root:not([data-theme="light"]) .kpi td:last-child { color: var(--accent); }
+.tablebox { overflow-x: auto; background: var(--surface); border: 2px solid var(--line); border-radius: 22px; }
+
+.trail { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0; }
+.stop { position: relative; display: grid; grid-template-columns: 48px 1fr; gap: 14px; padding-bottom: 16px; }
+.stop:not(:last-child)::after { content: ""; position: absolute; left: 23px; top: 48px; bottom: 0; border-left: 4px dotted var(--leaf3); }
+.stop .pin { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; font-family: var(--f-num); font-weight: 700; font-size: 18px; background: var(--surface); border: 3px solid var(--line); color: var(--muted); position: relative; z-index: 1; }
+.stop .card { background: var(--surface); border: 2px solid var(--line); border-radius: 22px; padding: 14px 18px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.stop .card h4 { margin: 0; font-size: 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.stop .badge { font-size: 12px; font-weight: 800; padding: 0 10px; border-radius: 999px; background: var(--bg); color: var(--muted); }
+.stop .what { font-size: 14px; color: var(--muted); }
+.stop .why { font-size: 15px; }
+.stop.past { opacity: .6; }
+.stop.here .pin { background: var(--accent); border-color: var(--accent-deep); color: var(--on-accent); animation: pulse 1.6s ease-in-out infinite; }
+.stop.here .card { border: 3px solid var(--accent); background: var(--accent-soft); box-shadow: 0 5px 0 var(--accent-deep); }
+.stop.here .card h4 { font-size: 26px; }
+.stop.here .badge { background: var(--accent); color: var(--on-accent); }
+.stop.next .pin { border-color: var(--leaf1); color: var(--leaf2); }
+.second { background: var(--surface); border: 2px dashed var(--leaf3); border-radius: 22px; padding: 16px 20px; display: flex; gap: 14px; align-items: flex-start; }
+.second .g { font-size: 34px; line-height: 1; }
+.coach { font-size: 21px; font-weight: 800; line-height: 1.6; background: var(--leaf2); color: #F4FBEE; border-radius: 26px 26px 26px 6px; padding: 20px 24px; }
+.note { font-size: 13px; color: var(--muted); }
+.toast { font-size: 14px; font-weight: 700; color: var(--down); min-height: 1.5em; }
+
+.screen { animation: rise .4s cubic-bezier(.3,1.4,.5,1) both; }
+@keyframes rise { from { transform: translateY(14px); opacity: .4; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .screen, .critter, .host, .stamp, .intro-head h1 em, .candle.now i, .fireflies i { animation: none !important; }
+  .bar .fill, .opt, .btn { transition: none; }
+}
+
+@media (max-width: 560px) {
+  #app { padding-top: 96px; }
+  .canopy { height: 110px; }
+  .scene { height: 280px; }
+  .critter { font-size: 54px; }
+  .mini .glyph { font-size: 40px; width: 70px; height: 70px; }
+  .critter .tag { display: none; }
+  .roster { grid-template-columns: repeat(2, 1fr); }
+  .two, .traits { grid-template-columns: 1fr; }
+  .weeks { grid-template-columns: 1fr 1fr; }
+  .specimen { grid-template-columns: 1fr; padding: 22px; justify-items: start; }
+  .stamp { width: 96px; height: 96px; font-size: 50px; }
+  .host { width: 58px; height: 58px; font-size: 34px; }
+  .bar { grid-template-columns: 5.5em 1fr 3em; }
+}
+</style>
+
+<div class="canopy" id="canopy" aria-hidden="true"></div>
+<div class="fireflies" id="fireflies" aria-hidden="true"></div>
+<div class="wrap" id="app"></div>
+<div class="bush" id="bush" aria-hidden="true"></div>
+
+<script>
+const ANIMALS = {
+  L: {
+    glyph: "🦁", name: "獅子", title: "重倉衝鋒獅", tag: "敢衝敢重壓，情緒一來就加碼",
+    motto: "「這一單我很有把握。」",
+    desc: "你出手果斷，趨勢來的時候能吃到大段行情。但你的部位大小常由情緒決定：連虧之後想一次討回來，賺錢之後覺得手感正熱。對你來說，一筆失控的單就可能吃掉一整個月的成果。",
+    traits: [5, 3, 2, 4],
+    strengths: ["決斷快，不拖泥帶水", "敢在關鍵位執行", "趨勢行情能抱出大段利潤"],
+    blind: ["連虧後放大部位（報復性交易）", "把自信誤當成勝率", "單筆虧損常超出帳戶可承受範圍"],
+    rules: [
+      ["單筆風險上限 1%", "開倉前先算：停損距離 × 數量 ≤ 帳戶 1%。算不出這個數字，就不下單。"],
+      ["每日熔斷機制", "當日虧損達 3% 或連虧 2 筆，當天停止交易，直接關掉交易 App。"],
+      ["90 秒冷卻", "下單前用一句話寫下進場理由，等 90 秒再送出。寫不出理由的，就是情緒單。"],
+      ["大賺後下一筆部位減半", "連續獲利時最容易放大部位，刻意縮小一次，讓「手感」冷卻。"],
+      ["只加碼賺錢的部位", "禁止在虧損單上攤平。加碼只能發生在已經獲利、且停損已移到成本的部位。"]
+    ],
+    weeks: ["每筆記錄風險佔帳戶 %，先看清楚自己平常壓多重", "啟用每日熔斷，寫在螢幕旁的便利貼上", "復盤最大的 3 筆虧損，找出當下的情緒觸發點", "檢查單筆最大虧損是否 ≤ 1.5%，未達標就把上限降到 0.5%"],
+    kpi: [["單筆最大虧損佔帳戶比例", "≤ 1.5%"], ["連虧後下一筆部位變化", "不放大"], ["觸發熔斷後仍下單的次數", "0 次"]],
+    coach: "市場不會因為你生氣就還你錢。先活下來，才有下一波行情。"
+  },
+  M: {
+    glyph: "🐒", name: "猴子", title: "FOMO 追價猴", tag: "看到價格在跑，手就癢",
+    motto: "「再不上車就來不及了！」",
+    desc: "你對盤面很敏感，反應也快，總能第一時間發現熱點。問題是你交易得太頻繁，而且常在拉升末段才追進去。手續費、滑價和追高的成本，正在一點一點吃掉你的獲利。",
+    traits: [3, 5, 1, 3],
+    strengths: ["反應快，對熱點敏感", "執行力高，不怕下單", "能從盤感中學得很快"],
+    blind: ["追在行情末段，進場位置差", "手續費與滑價侵蝕獲利", "沒有固定交易時段，整天盯盤"],
+    rules: [
+      ["每日交易上限 3 單", "在便利貼上畫 3 個格子，下一單劃掉一格，劃完就收工。"],
+      ["離開進場區就不追", "價格已離你的進場區超過 1 倍 ATR，就不追，改在回踩位置掛單等待。"],
+      ["固定交易時段", "每天只在事先訂好的 2 小時內下單，其他時間只看不動。"],
+      ["進場三項檢查", "趨勢方向、關鍵價位、停損位置。三項全部勾選才可以下單。"],
+      ["每月算一次成本", "統計手續費＋滑價佔總盈虧的比例，讓隱形成本變成看得見的數字。"]
+    ],
+    weeks: ["記錄每天的下單次數與時間，看出自己最手癢的時段", "實施每日 3 單上限與固定交易時段", "把追價單與掛單分開統計勝率", "計算本月手續費佔比，與第一週對照"],
+    kpi: [["日均交易筆數", "≤ 3 筆"], ["手續費＋滑價佔總獲利", "< 15%"], ["追價單 vs 掛單的勝率差", "持續追蹤"]],
+    coach: "錯過一班車不會怎樣，搭錯車才會。好行情每週都有，你的本金只有一份。"
+  },
+  O: {
+    glyph: '<svg viewBox="0 0 64 64" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 50h52"/><ellipse cx="22" cy="28" rx="14" ry="10" fill="currentColor" fill-opacity=".85"/><path d="M8 24c-3-4-2-8 2-9"/><path d="M34 26c8-4 12 4 14 12s2 10 2 12"/><path d="M18 37l-2 13M26 37l3 13"/></svg>', name: "鴕鳥", title: "不停損鴕鳥", tag: "虧損時選擇不看，相信會回來",
+    motto: "「放著就會漲回來了。」",
+    desc: "你很有耐心，也能承受波動，不容易被短線雜訊洗出場。但面對虧損時，你的第一反應是逃避：停損往下移、加碼攤平、乾脆不開 App。小虧因此凹成大虧，而大虧需要很長的時間才補得回來。",
+    traits: [4, 1, 1, 3],
+    strengths: ["耐心足，能抱住單", "不被短線雜訊干擾", "心態穩定，不容易慌亂"],
+    blind: ["停損只存在心裡", "虧損單拖得比獲利單還久", "逃避查看帳戶，錯過處理時機"],
+    rules: [
+      ["下單同時掛停損", "用 OCO 或條件單，進場的同一刻就把停損掛上交易所。心裡的停損不算數。"],
+      ["停損只能往有利方向移", "把這句話貼在螢幕旁：停損可以收緊，不可以放寬。"],
+      ["每日 5 分鐘帳戶檢查", "每天固定時間打開帳戶，逐一看完所有持倉，不論盈虧。"],
+      ["空手測試", "每筆虧損單問自己：「如果現在空手，我會在這個價格買進嗎？」答案是否，就出場。"],
+      ["禁止攤平", "虧損部位不加碼。想加碼，先回到規則 1 重新開一筆有停損的新單。"]
+    ],
+    weeks: ["盤點現有持倉，每一筆都補上實際掛出的停損單", "每天固定 5 分鐘檢查帳戶，連續 7 天不中斷", "把所有虧損單優先寫進交易日誌", "計算平均虧損 ÷ 平均獲利，與第一週比較"],
+    kpi: [["平均虧損 ÷ 平均獲利", "< 1.0"], ["有預掛停損的交易比例", "100%"], ["虧損單平均持有天數", "短於獲利單"]],
+    coach: "停損不是認輸，是付錢買下一次機會。越晚付，價格越高。"
+  },
+  T: {
+    glyph: "🐢", name: "烏龜", title: "過度保守龜", tag: "怕虧到不敢出手，賺一點就跑",
+    motto: "「再等等，比較保險。」",
+    desc: "你的風控意識很好，回撤小，在市場裡活得很久。但你常常條件都符合了還不敢進場，進場後部位又小到沒感覺，賺一點點就急著落袋。長期下來，報酬風險比失衡，努力換不到相應的成果。",
+    traits: [1, 2, 4, 3],
+    strengths: ["風險意識強，回撤小", "守規則，不容易爆倉", "能長期留在市場裡"],
+    blind: ["符合條件仍不敢進場", "太早停利，獲利抱不住", "部位太小，學不到真實經驗"],
+    rules: [
+      ["固定風險模型", "每筆固定承擔帳戶 0.5%–1% 的風險。符合條件就用這個數字，不再臨時縮小。"],
+      ["分批出場", "一半部位在 1R 停利，另一半用移動停損，讓利潤自己跑。"],
+      ["一根 K 線內決定", "訊號出現後，一根 K 線內決定進不進。錯過就記為「錯過單」，週末檢視它的結果。"],
+      ["每週 5 筆扣扳機練習", "用小部位執行 5 筆完全符合規則的交易，重點在執行，不在盈虧。"],
+      ["先接受最壞結果", "下單前念一次：「這筆最多虧 X 元，我接受。」接受了就按下去。"]
+    ],
+    weeks: ["記錄每一個「符合條件但沒進場」的訊號", "開始用固定風險模型，停止臨時縮小部位", "導入分批出場，追蹤後半部位多賺了多少", "比較本月平均 R 倍數與上月"],
+    kpi: [["平均獲利 R 倍數", "≥ 1.5R"], ["錯過的有效訊號數", "逐週下降"], ["計畫停利 vs 實際停利差距", "縮小"]],
+    coach: "不虧錢不等於做得好。虧損是做生意的成本，你付得起，就該讓機會發生。"
+  },
+  S: {
+    glyph: "🐑", name: "綿羊", title: "跟單綿羊", tag: "依賴老師和群組，沒有自己的系統",
+    motto: "「老師說可以進了。」",
+    desc: "你願意學習，資訊蒐集得很快，也樂於參考別人的觀點。但你大部分的交易都來自別人的訊號，自己說不太出進場理由。沒人通知出場時就不知所措，虧損時也容易把責任推給訊號來源。",
+    traits: [3, 3, 2, 1],
+    strengths: ["學習意願高", "資訊蒐集速度快", "能接納不同觀點"],
+    blind: ["說不出自己的進出場理由", "沒人喊出場就不知所措", "無法累積屬於自己的經驗"],
+    rules: [
+      ["跟單前先寫三件事", "進場理由、停損位、停利位。三項寫不出來，就不跟這一單。"],
+      ["30 天訊號驗證", "把你追蹤的每個訊號來源都記錄下來，實際算出勝率與盈虧比，再決定是否信任。"],
+      ["建立最簡系統", "1 個時間週期、1 個趨勢工具、1 種進場型態。先用小部位跑出自己的數據。"],
+      ["交易時段關通知", "下單時段關掉群組推播，只看自己的圖表與清單。"],
+      ["訊號當候選，不當指令", "別人的訊號只能進入你的觀察清單，要通過你自己的檢查才能下單。"]
+    ],
+    weeks: ["建立訊號追蹤表，記下每個來源的每一次喊單", "定義自己的最簡系統，寫成一頁紙", "用小部位執行自己的系統至少 5 筆", "比較自主交易與跟單交易的績效"],
+    kpi: [["能寫出理由的交易比例", "100%"], ["訊號來源的實測勝率", "有數據再信任"], ["自主交易佔比", "逐月提升"]],
+    coach: "老師可以教你釣魚，但釣竿要握在自己手上。說不出理由的單，贏了也學不到東西。"
+  },
+  W: {
+    glyph: "🦉", name: "貓頭鷹", title: "分析癱瘓鷹", tag: "研究很深，卻常分析到錯過",
+    motto: "「我再確認一個指標就好。」",
+    desc: "你的研究能力很強，邏輯清楚，最有機會建立一套完整的交易系統。但你習慣等「完美的點」，指標越加越多，策略一出現虧損就想換新的。結果是看得很多、做得很少，系統也從來沒有真正被驗證過。",
+    traits: [2, 1, 3, 5],
+    strengths: ["研究能力強，邏輯清楚", "有能力建立完整系統", "不容易被情緒帶著走"],
+    blind: ["分析太久，錯過進場點", "指標堆疊、回測過度擬合", "策略沒跑完樣本就換掉"],
+    rules: [
+      ["指標上限 3 個", "把圖表上超過 3 個的指標全部刪掉。留下最能代表你策略邏輯的那 3 個。"],
+      ["30 筆才評估", "一套策略至少執行 30 筆交易才檢討，中途不修改任何規則。"],
+      ["5 分鐘決策限時", "進場條件成立後，5 分鐘內必須決定。超過時間就記為錯過，不再追。"],
+      ["保留樣本外資料", "回測時保留 30% 的資料不碰，用來做最後驗證，避免過度擬合。"],
+      ["研究與執行比例", "每週記錄研究時數與實際交易時數，比例目標不超過 3:1。"]
+    ],
+    weeks: ["清理圖表，只留 3 個指標，寫下每個指標的用途", "選定一套策略，開始 30 筆的執行計畫", "記錄每一次「條件符合但沒執行」與其原因", "檢查研究 : 執行時數比，調整下個月的時間分配"],
+    kpi: [["條件符合卻未執行的次數", "逐週下降"], ["同一策略連續執行筆數", "≥ 30 筆"], ["樣本外 vs 樣本內績效差", "< 30%"]],
+    coach: "完美的進場點只存在於回測裡。一個被執行 30 次的普通策略，勝過一個從未上線的完美策略。"
+  }
+};
+// 課程有固定順序：實戰班 → 題庫班 → 幣聖課 → 私教班
+const STAGES = [
+  { name: "實戰班", what: "加強 3+1 指標使用" },
+  { name: "題庫班", what: "過濾不好的 3+1 條件，提升 3+1 勝率" },
+  { name: "幣聖課", what: "學習道法術器、馬刺策略，提高進場機會" },
+  { name: "私教班", what: "小班制課程，學習判斷日內偏見" }
+];
+// 每種動物的起點階段（0 起算）與原因
+const START_STAGE = {
+  S: [0, "你需要一套自己看得懂的工具。從實戰班把 3+1 指標用熟，才能獨立判斷，不再等別人喊單。"],
+  O: [0, "你最需要明確的出場依據。實戰班把 3+1 指標用熟之後，停損點由指標決定，而不是由心情決定。"],
+  M: [1, "你缺的不是機會，是篩選。題庫班教你分辨哪些 3+1 條件值得進場，把一天十幾單濃縮成真正高勝率的那幾單。"],
+  L: [1, "你的虧損多半來自情緒單。題庫班教你先過濾掉不合格的 3+1 條件，沒通過檢查就不下單，重倉衝動自然減少。"],
+  T: [2, "你的風控已經夠好，缺的是出手次數。幣聖課的馬刺策略幫你找到更多有依據的進場點。"],
+  W: [2, "你研究夠多了，缺的是把分析變成進場。幣聖課用道法術器的框架收斂你的系統，馬刺策略給你明確的進場時機。"]
+};
+const TRAIT_NAMES = ["風險承受", "交易頻率", "紀律執行", "獨立判斷"];
+const ORDER = ["L", "M", "O", "T", "S", "W"];
+
+const QUESTIONS = [
+  { q: "連續虧損 3 筆之後，你通常會？", o: [
+    ["加大下一筆部位，想一次賺回來", { L: 2 }],
+    ["今天就休息，等情緒恢復再開始看盤", { G: 1 }],
+    ["接下來好幾天都不太敢再下單", { T: 2 }]]},
+  { q: "某檔標的 15 分鐘內拉了 8%，你的第一反應？", o: [
+    ["馬上追進去，怕錯過", { M: 2 }],
+    ["先拉出各週期圖表、指標分析完再說（分析完通常已經過了）", { W: 2 }],
+    ["太危險了，不碰", { T: 2 }],
+    ["看群組老師或 KOL 有沒有喊", { S: 2 }]]},
+  { q: "持倉虧損已經超過原本設的停損點，你會？", o: [
+    ["照計畫停損，並復盤這筆訂單的策略", { G: 1 }],
+    ["加碼攤平，把均價拉低", { L: 1, O: 1 }],
+    ["照計畫停損，但之後很久不敢再進場", { T: 2 }],
+    ["問群組大家怎麼看", { S: 2 }]]},
+  { q: "你一天大概看盤多久、下幾單？", o: [
+    ["看很久，但真正下單很少，等到條件都滿足了才進場", { G: 1 }],
+    ["看很久，但真正下單很少，常在等更完美的點", { W: 2 }],
+    ["很少看，有虧損的時候更不想打開", { O: 2 }],
+    ["有訊號推播才看", { S: 2 }]]},
+  { q: "你的部位大小是怎麼決定的？", o: [
+    ["看感覺，有把握就重壓", { L: 2 }],
+    ["有公式計算，但常為了算得更精確而拖延", { W: 2 }],
+    ["永遠下很小，小到賺了也沒什麼感覺", { T: 2 }],
+    ["跟著帶單老師的比例", { S: 2 }]]},
+  { q: "最近一次賺到大錢之後，你的狀態是？", o: [
+    ["覺得抓到感覺了，下一筆開更大", { L: 2 }],
+    ["很興奮，馬上找下一個機會繼續打", { M: 2 }],
+    ["趕快落袋，之後很怕把它吐回去", { T: 2 }],
+    ["覺得是運氣，開始研究是不是該換更好的策略", { W: 2 }]]},
+  { q: "你的交易日誌長什麼樣子？", o: [
+    ["沒在寫，交易太多寫不完", { M: 2 }],
+    ["非常詳細，指標、截圖一應俱全，但真的下單很少", { W: 2 }],
+    ["虧損的單不太想記", { O: 2 }],
+    ["主要記老師喊了什麼", { S: 2 }]]},
+  { q: "你的交易策略大概多久會換一次？", o: [
+    ["看到新方法就想試，一兩週就換", { M: 2 }],
+    ["一直在回測、優化，很難定下來", { W: 2 }],
+    ["一直在復盤、優化，持續提高策略的勝率", { G: 1 }],
+    ["同一套用很久，但一直不太敢放大", { T: 2 }]]},
+  { q: "市場出現重大利空新聞，你的持倉正在虧損，你會？", o: [
+    ["不看新聞，相信會漲回來", { O: 2 }],
+    ["反手重倉做空，一口氣翻身", { L: 2 }],
+    ["我有確定的盈虧比以及止盈點位，到了就不猶豫直接出場", { G: 1 }],
+    ["等群組有人說該怎麼辦", { S: 2 }]]},
+  { q: "有人問你：「這筆單的出場計畫是什麼？」你會說？", o: [
+    ["「到時候看盤感覺。」", { L: 1, M: 1 }],
+    ["「我有三套方案，還在比較哪個最好。」", { W: 2 }],
+    ["「虧了就先放著，總會回來。」", { O: 2 }],
+    ["「老師會通知。」", { S: 2 }]]},
+  { q: "錯過一大段行情之後，你的感受是？", o: [
+    ["天天有機會，耐心等待下一個機會", { G: 1 }],
+    ["還好沒進場，反正也可能會跌", { T: 2 }],
+    ["懊惱自己分析得不夠快", { W: 2 }],
+    ["怪自己沒跟上群組的訊號", { S: 2 }]]},
+  { q: "你最常在什麼時刻按下單鍵？", o: [
+    ["情緒上來的那一刻：生氣、不甘心，或覺得很有把握", { L: 2 }],
+    ["看到價格在跑，手就按下去了", { M: 2 }],
+    ["條件都符合了，確定有把握了才進場", { G: 1 }],
+    ["比起下單，更常出現的是該處理的虧損單一直拖著", { O: 2 }]]}
+];
+
+// max achievable score per animal (for normalising)
+const MAX = {};
+ORDER.forEach(k => MAX[k] = QUESTIONS.reduce((s, q) => s + Math.max(0, ...q.o.map(o => o[1][k] || 0)), 0));
+
+// pseudo-random candle shapes, fixed per question
+const CANDLES = QUESTIONS.map((_, i) => {
+  const r = n => ((Math.sin((i + 1) * 12.9898 * n) * 43758.5453) % 1 + 1) % 1;
+  return { h: 28 + r(1) * 40, o: (r(2) - .5) * 30, wt: 4 + r(3) * 12, wb: 4 + r(4) * 12, up: r(5) > .42 };
+});
+
+let state = { screen: "intro", idx: 0, answers: [], order: [] };
+
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+const $app = document.getElementById("app");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+function render() {
+  if (state.screen === "intro") renderIntro();
+  else if (state.screen === "quiz") renderQuiz();
+  else renderResult();
+  try { window.scrollTo({ top: 0 }); } catch (e) {}
+}
+
+
+// ---------- jungle decoration ----------
+const LEAF = "M0 0 Q28 -20 64 0 Q28 20 0 0Z";
+function rnd(seed) { let x = seed; return () => (x = (x * 9301 + 49297) % 233280) / 233280; }
+function leafAt(x, y, rot, sc, cls) {
+  return `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${rot.toFixed(0)}) scale(${sc.toFixed(2)})"><path class="${cls}" d="${LEAF}"/><path d="M4 0 H58" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/></g>`;
+}
+function canopySVG() {
+  const r = rnd(7); let out = "";
+  // vines
+  [90, 300, 560, 820, 1080].forEach((x, i) => {
+    const len = 70 + r() * 60;
+    out += `<path class="vn" d="M${x} 0 C ${x - 14} ${len * .35}, ${x + 14} ${len * .7}, ${x} ${len}"/>`;
+    for (let t = 20; t < len; t += 22) out += leafAt(x + (t / 22 % 2 ? 2 : -2), t, t / 22 % 2 ? 30 : 150, .35, "lf3");
+  });
+  // leaf canopy
+  for (let i = 0; i < 70; i++) {
+    const x = i * 18 + r() * 20 - 10, y = -6 + r() * 34;
+    out += leafAt(x, y, 20 + r() * 140, .7 + r() * .9, ["lf1", "lf2", "lf3"][i % 3]);
+  }
+  return `<svg viewBox="0 0 1200 140" preserveAspectRatio="xMidYMin slice">${out}</svg>`;
+}
+function bushSVG() {
+  const r = rnd(3); let out = "";
+  for (let i = 0; i < 26; i++) {
+    const x = i * 48 + r() * 20, y = 70 + r() * 10, rad = 30 + r() * 26;
+    out += `<circle class="${["lf1", "lf2", "lf3"][i % 3]}" cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${rad.toFixed(0)}"/>`;
+  }
+  for (let i = 0; i < 30; i++) out += leafAt(i * 42 + r() * 20, 40 + r() * 20, -60 - r() * 60, .6 + r() * .5, ["lf2", "lf3", "lf1"][i % 3]);
+  return `<svg viewBox="0 0 1200 90" preserveAspectRatio="xMidYMax slice">${out}</svg>`;
+}
+function sceneSVG() {
+  const r = rnd(11); let out = "";
+  out += `<ellipse cx="160" cy="300" rx="260" ry="110" style="fill:var(--hill)"/><ellipse cx="560" cy="310" rx="300" ry="120" style="fill:var(--hill)"/>`;
+  out += `<ellipse cx="560" cy="248" rx="70" ry="16" style="fill:var(--sand)"/>`;
+  out += `<ellipse cx="150" cy="210" rx="56" ry="26" style="fill:var(--line)"/>`; // rock for the lion
+  out += `<path d="M500 0 Q520 40 500 80" class="vn"/><path d="M640 -10 Q700 70 610 70" style="stroke:var(--vine);stroke-width:14;fill:none;stroke-linecap:round"/>`; // branch for owl
+  out += `<path class="vn" d="M120 0 C 110 30, 140 55, 130 78"/>`;
+  for (let i = 0; i < 14; i++) out += leafAt(r() * 60 - 20, 150 + r() * 110, -40 - r() * 80, .8 + r() * .6, ["lf1", "lf2", "lf3"][i % 3]);
+  for (let i = 0; i < 14; i++) out += leafAt(720 - r() * 40, 140 + r() * 120, 200 + r() * 80, .8 + r() * .6, ["lf1", "lf2", "lf3"][i % 3]);
+  for (let i = 0; i < 20; i++) out += leafAt(i * 40 + r() * 10, -8 + r() * 20, 40 + r() * 100, .6 + r() * .5, ["lf1", "lf2", "lf3"][i % 3]);
+  return `<svg viewBox="0 0 720 270" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${out}</svg>`;
+}
+// where each animal lives in the intro scene (percent of scene box)
+const SPOTS = { M: [17, 32, "swing"], L: [21, 66], S: [42, 72], T: [62, 80], O: [81, 76], W: [86, 30] };
+function initDeco() {
+  document.getElementById("canopy").innerHTML = canopySVG();
+  document.getElementById("bush").innerHTML = bushSVG();
+  const r = rnd(5);
+  document.getElementById("fireflies").innerHTML = Array.from({ length: 14 }, (_, i) =>
+    `<i style="left:${(r() * 100).toFixed(1)}%;top:${(20 + r() * 75).toFixed(1)}%;animation-delay:${(r() * 4).toFixed(2)}s"></i>`).join("");
+}
+initDeco();
+
+function renderIntro() {
+  $app.innerHTML = `
+  <section class="screen wrap">
+    <div class="intro-head">
+      <span class="eyebrow">交易叢林探險 · 12 題 · 約 3 分鐘</span>
+      <h1>在交易叢林裡，<br>你是哪一種<em>動物</em>？</h1>
+      <p class="lede">照你「實際上」會怎麼做來回答，而不是你「覺得應該」怎麼做。走完叢林，你會拿到自己的交易動物、盲點分析、30 天改善計畫，還有你的學習起點。</p>
+    </div>
+    <div class="scene" aria-label="叢林裡的六種交易動物">
+      ${sceneSVG()}
+      ${ORDER.map((k, n) => { const [x, y, cls] = SPOTS[k]; return `<span class="critter ${cls || ""}" style="left:${x}%;top:${y}%;--d:${(n * .35).toFixed(2)}s" aria-hidden="true">${ANIMALS[k].glyph}<span class="tag">${ANIMALS[k].name}</span></span>`; }).join("")}
+    </div>
+    <div class="btn-row center"><button class="btn" id="start">走進叢林 →</button></div>
+    <div class="roster">
+      ${ORDER.map(k => { const a = ANIMALS[k]; return `
+        <div class="mini"><span class="glyph" aria-hidden="true">${a.glyph}</span>
+        <span class="nm">${a.title}</span><span class="tg">${a.tag}</span></div>`; }).join("")}
+    </div>
+    <div class="meta"><span>6 種交易動物</span><span>5 條專屬規則</span><span>30 天計畫</span><span>學習階段</span></div>
+  </section>`;
+  document.getElementById("start").onclick = () => {
+    state = { screen: "quiz", idx: 0, answers: [], order: QUESTIONS.map(q => shuffle(q.o.map((_, i) => i))) };
+    render();
+  };
+}
+
+function candleBar() {
+  return `<div class="candles" aria-hidden="true">${CANDLES.map((c, i) => {
+    const cls = state.answers[i] != null ? `done ${c.up ? "up" : "dn"}` : (i === state.idx ? "now" : "");
+    return `<div class="candle ${cls}" style="--h:${c.h}%;--o:${c.o}%;--wt:${c.wt}%;--wb:${c.wb}%"><i></i></div>`;
+  }).join("")}</div>`;
+}
+
+function renderQuiz() {
+  const i = state.idx, Q = QUESTIONS[i], picked = state.answers[i];
+  const keys = "ABCD";
+  $app.innerHTML = `
+  <section class="screen wrap">
+    <div class="progress">${candleBar()}</div>
+    <div class="qhead"><span class="eyebrow">叢林情境題</span><span class="qcount">${i + 1} / ${QUESTIONS.length}</span></div>
+    <div class="asker">
+      <span class="host" aria-hidden="true">${ANIMALS[ORDER[i % ORDER.length]].glyph}</span>
+      <div class="bubble"><span class="who">${ANIMALS[ORDER[i % ORDER.length]].name}問你：</span><h2 class="qtext">${esc(Q.q)}</h2></div>
+    </div>
+    <div class="opts" role="list">
+      ${state.order[i].map((oi, n) => `<button class="opt ${picked === oi ? "picked" : ""}" data-oi="${oi}" id="opt-${i}-${oi}" role="listitem"><span class="k">${keys[n]}</span><span>${esc(Q.o[oi][0])}</span></button>`).join("")}
+    </div>
+    <div class="qfoot">
+      <button class="link" id="back" ${i === 0 ? "disabled" : ""}>← 上一題</button>
+      <button class="link" id="quit">重新開始</button>
+    </div>
+  </section>`;
+  $app.querySelectorAll(".opt").forEach(b => b.onclick = () => {
+    state.answers[i] = +b.dataset.oi;
+    $app.querySelectorAll(".opt").forEach(x => x.classList.toggle("picked", x === b));
+    setTimeout(() => {
+      if (i < QUESTIONS.length - 1) state.idx++; else state.screen = "result";
+      render();
+    }, 260);
+  });
+  document.getElementById("back").onclick = () => { if (state.idx > 0) { state.idx--; render(); } };
+  document.getElementById("quit").onclick = () => { state = { screen: "intro", idx: 0, answers: [], order: [] }; render(); };
+}
+
+function score() {
+  const raw = Object.fromEntries(ORDER.map(k => [k, 0])); raw.G = 0;
+  state.answers.forEach((oi, qi) => { if (oi == null) return; Object.entries(QUESTIONS[qi].o[oi][1]).forEach(([k, v]) => raw[k] += v); });
+  const pct = Object.fromEntries(ORDER.map(k => [k, Math.round(raw[k] / MAX[k] * 100)]));
+  const ranked = ORDER.slice().sort((a, b) => pct[b] - pct[a] || raw[b] - raw[a]);
+  return { raw, pct, ranked, g: raw.G, gMax: QUESTIONS.filter(q => q.o.some(o => o[1].G)).length };
+}
+
+function renderResult() {
+  const { pct, ranked, g, gMax } = score();
+  const a = ANIMALS[ranked[0]], b = ANIMALS[ranked[1]];
+  $app.innerHTML = `
+  <section class="screen wrap">
+    <p class="reveal">叢林探險完成！你的交易動物是⋯⋯</p>
+    <article class="specimen">
+      <svg class="corner" viewBox="0 0 130 90" aria-hidden="true">${leafAt(60, 10, 150, 1.1, "lf1")}${leafAt(90, 30, 120, .9, "lf3")}${leafAt(120, 5, 100, 1, "lf2")}</svg>
+      <div class="stamp" aria-hidden="true">${a.glyph}</div>
+      <div class="id">
+        <span class="eyebrow">圖鑑 No.${String(ORDER.indexOf(ranked[0]) + 1).padStart(2, "0")} · ${a.name}</span>
+        <h2>${a.title}</h2>
+        <p class="motto">${a.motto}</p>
+      </div>
+      <p class="desc">${a.desc}</p>
+      <div class="traits">
+        ${TRAIT_NAMES.map((t, n) => `<div class="trait"><span>${t}</span><span class="pips" aria-label="${t} ${a.traits[n]} / 5">${[1,2,3,4,5].map(v => `<b class="${v <= a.traits[n] ? "on" : ""}"></b>`).join("")}</span></div>`).join("")}
+      </div>
+    </article>
+
+    <div class="section">
+      <h3>你的屬性分布</h3>
+      <div class="dist">
+        ${ranked.map((k, n) => `<div class="bar ${n === 0 ? "main" : ""}"><span>${ANIMALS[k].glyph} ${ANIMALS[k].name}</span><div class="track"><div class="fill" style="width:0" data-w="${pct[k]}"></div></div><span class="pct">${pct[k]}%</span></div>`).join("")}
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>紀律指數</h3>
+      <div class="dist"><div class="bar main"><span>紀律選項</span><div class="track"><div class="fill" style="width:0;background:var(--down)" data-w="${Math.round(g / gMax * 100)}"></div></div><span class="pct">${g}/${gMax}</span></div></div>
+      <p class="note">有 ${gMax} 題包含符合交易紀律的做法，你選了其中 ${g} 題。${g >= Math.ceil(gMax * .7) ? "你的紀律基礎已經不錯，接下來專心修正上面這個動物的盲點。" : g >= Math.ceil(gMax * .4) ? "你知道正確做法，但還沒成為習慣。照下面的規則練 30 天。" : "目前多數決策還是由習慣和情緒主導，下面的 5 條規則請從下一筆開始執行。"}</p>
+    </div>
+
+    <div class="two">
+      <div class="panel"><h4><span class="dot" style="background:var(--down)"></span>你的優勢</h4><ul>${a.strengths.map(s => `<li>${s}</li>`).join("")}</ul></div>
+      <div class="panel"><h4><span class="dot" style="background:var(--up)"></span>你的盲點</h4><ul>${a.blind.map(s => `<li>${s}</li>`).join("")}</ul></div>
+    </div>
+
+    <div class="section">
+      <h3>5 條交易規則，從下一筆開始執行</h3>
+      <ol class="rules">${a.rules.map(([t, d]) => `<li><strong>${t}</strong><span>${d}</span></li>`).join("")}</ol>
+    </div>
+
+    <div class="section">
+      <h3>30 天改善計畫</h3>
+      <div class="weeks">${a.weeks.map((w, n) => `<div class="week"><span class="wk">WEEK ${n + 1}</span>${w}</div>`).join("")}</div>
+    </div>
+
+    <div class="section">
+      <h3>每月要追蹤的數字</h3>
+      <div class="tablebox"><table class="kpi"><thead><tr><th>指標</th><th>目標</th></tr></thead>
+      <tbody>${a.kpi.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("")}</tbody></table></div>
+    </div>
+
+    <div class="second">
+      <span class="g" aria-hidden="true">${b.glyph}</span>
+      <div><strong>副屬性：${b.title}（${pct[ranked[1]]}%）</strong>
+      <p class="note" style="font-size:15px;color:var(--ink)">你身上也有${b.name}的影子。額外留意這一條：<b>${b.rules[0][0]}</b>，${b.rules[0][1]}</p></div>
+    </div>
+
+    <div class="section">
+      <h3>你的學習階段</h3>
+      <p class="note" style="font-size:15px">課程依序為 ${STAGES.map(x => x.name).join(" → ")}。依照你的交易動物，這是你的起點：</p>
+      <ol class="trail">
+        ${(() => {
+          const [st, why] = START_STAGE[ranked[0]];
+          return STAGES.map((c, n) => {
+            const cls = n < st ? "past" : n === st ? "here" : n === st + 1 ? "next" : "";
+            const badge = n < st ? "已具備基礎" : n === st ? "你的起點" : n === st + 1 ? "下一階段" : n === STAGES.length - 1 ? "最終階段" : "之後";
+            return `<li class="stop ${cls}"><span class="pin">${n + 1}</span><div class="card"><h4>${c.name}<span class="badge">${badge}</span></h4><p class="what">${c.what}</p>${n === st ? `<p class="why">${why}</p>` : ""}</div></li>`;
+          }).join("");
+        })()}
+      </ol>
+    </div>
+
+    <p class="coach">${a.coach}</p>
+
+    <div class="btn-row">
+      <button class="btn" id="copy">複製我的結果</button>
+      <button class="btn ghost" id="again">重新測驗</button>
+    </div>
+    <p class="toast" id="toast" role="status"></p>
+    <textarea id="copybox" hidden readonly style="width:100%;min-height:160px"></textarea>
+    <p class="note">本測驗是交易行為的自我覺察工具，用來幫助你找出需要調整的習慣，不構成任何投資建議。</p>
+  </section>`;
+  requestAnimationFrame(() => requestAnimationFrame(() =>
+    $app.querySelectorAll(".fill").forEach(f => f.style.width = f.dataset.w + "%")));
+
+  const text = [
+    `我的交易動物：${a.title}（${a.name}）`,
+    `副屬性：${b.title}（${b.name}）`,
+    `紀律指數：${g}/${gMax}`,
+    `屬性分布：` + ranked.map(k => `${ANIMALS[k].name} ${pct[k]}%`).join("｜"),
+    `學習階段：從第 ${START_STAGE[ranked[0]][0] + 1} 階段開始，${STAGES.slice(START_STAGE[ranked[0]][0]).map(x => x.name).join(" → ")}`,
+    ``, `我要執行的規則：`,
+    ...a.rules.map(([t], n) => `${n + 1}. ${t}`)
+  ].join("\n");
+  document.getElementById("copy").onclick = () => {
+    const toast = document.getElementById("toast"), box = document.getElementById("copybox");
+    const fallback = () => { box.value = text; box.hidden = false; box.select(); toast.textContent = "請手動複製下方文字。"; };
+    try {
+      navigator.clipboard.writeText(text).then(() => toast.textContent = "已複製，可以貼給教練或同學。", fallback);
+    } catch (e) { fallback(); }
+  };
+  document.getElementById("again").onclick = () => { state = { screen: "intro", idx: 0, answers: [], order: [] }; render(); };
+}
+
+function start(saved) {
+  if (saved && saved.screen) state = saved;
+  window.claude?.hot?.snapshot?.(() => state);
+  render();
+}
+window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
+</script>
+
+</body>
+</html>
